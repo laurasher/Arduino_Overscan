@@ -6,7 +6,6 @@
 #define BITWIDTH 5
 #define THRESHOLD 3
 TVout tv;
-pollserial pserial;
 unsigned char x, y;
 char s[32];
 int start = 40;
@@ -40,7 +39,6 @@ char *dictionary[] = {
 
 void setup()  {
   tv.begin(_NTSC, W, H);
-  tv.set_hbi_hook(pserial.begin(57600));
   initOverlay();
   initInputProcessing();
 
@@ -162,7 +160,6 @@ void loop() {
       // control character
       if ((c[0] != lastControlCode[0]) && (c[1] != lastControlCode[1])) {
         if (!newline) {
-          pserial.write('\n');
           newline = true;
         }
         lastControlCode[0] = c[0];
@@ -172,13 +169,11 @@ void loop() {
       if (c[0] > 0) {
         newline = false;
         lastControlCode[0] = 0;
-        pserial.write(c[0]);
         tv.print(c[0]);
       }
       if (c[1] > 0) {
         newline = false;
         lastControlCode[0] = 0;
-        pserial.write(c[1]);
         tv.print(c[1]);
       }
     }
